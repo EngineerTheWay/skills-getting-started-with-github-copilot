@@ -89,11 +89,20 @@ def get_activities():
 
 
 @app.post("/activities/{activity_name}/signup")
-def signup_for_activity(activity_name: str, email: str):
+def signup_for_activity(activity_name: str, username: str):
     """Sign up a student for an activity"""
     # Validate activity exists
     if activity_name not in activities:
         raise HTTPException(status_code=404, detail="Activity not found")
+
+    username = username.strip().lower()
+    if not username or "@" in username:
+        raise HTTPException(
+            status_code=400,
+            detail="Enter a valid username without an email domain"
+        )
+
+    email = f"{username}@mergington.edu"
 
     # Get the specific activity
     activity = activities[activity_name]
